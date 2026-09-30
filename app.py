@@ -57,12 +57,13 @@ with st.sidebar:
     T = st.select_slider("Maturité (années)", options=[2, 3, 4, 5, 6, 7, 8, 9, 10], value=5)
     dates = payment_dates(T)
     par = par_rate(curve_at(dates), dates)
-    c = st.number_input("Taux fixe du swap (%)", 0.0, 10.0, round(par * 100, 3), step=0.01) / 100
+    c = st.number_input("Taux fixe du swap (%)", 0.0, 10.0, float(par * 100), step=0.01, format="%.4f") / 100
     st.header("Scénario de marché")
     shift_bp = st.slider("Choc parallèle de la courbe (bp)", -100, 100, 0, step=5)
 
 curve = curve_at(dates, shift_bp * 1e-4)
 value = swap_value_payer(N, c, curve, dates)
+value = 0.0 if abs(value) < 0.5 else value
 d = dv01(N, c, curve, dates)
 
 col1, col2, col3 = st.columns(3)
